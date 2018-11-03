@@ -1,0 +1,84 @@
+﻿@model ComplianceAuditWeb.Models.AuditViewModel
+@{
+    ViewBag.Title = "Compliance Auditing";
+}
+
+@section scripts{
+
+    <script language="javascript" type="text/javascript">
+        function GetBranch(_CompanyId) {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#complianceAudit_Company_ID").html(procemessage).show();
+            var url = "/Common/getspecificbranch";
+
+            $.ajax({
+                url: url,
+
+                data: { compid: _CompanyId },
+
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>Select Branch</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#complianceAudit_Company_ID").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+
+        }
+    </script>
+}
+<ul class="breadcrumb ML15">
+    <li><a href="">Auditing Management</a></li>
+    <li> Auditing</li>
+</ul>
+<h2 class="ML15">Auditing</h2>
+
+
+@using (Html.BeginForm())
+{
+    <div class="mid_content_sec">
+        <div class="col-xs-5 subSelect ">
+            <div class="input-field">
+
+                @Html.Label("Company")
+                @Html.DropDownListFor(m => m.complianceAudit.Org_Hier_Id, Model.MappedCompany, new { @class = "inputMaterial ui - autocomplete - input", @onchange = "GetBranch(this.value)" })
+
+                <span id="loading_data_icon"></span>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-xs-5 subSelect ">
+            <div class="input-field">
+
+                @Html.Label("Branch")
+                @Html.DropDownListFor(m => m.complianceAudit.Company_ID, Model.MappedBranch, new { @class = "inputMaterial ui - autocomplete - input" })
+                <span id="loading_data_icon"></span>
+            </div>
+        </div>
+
+
+        @Html.HiddenFor(m => m.complianceAudit.Company_ID)
+        @Html.HiddenFor(m => m.complianceAudit.Auditor_Id)
+
+        <div class="clearfix"></div>
+
+        <ul class="list-inline continueBtn">
+            <li>
+
+                <input type="submit" value="Start Auditing" class="btn primary-button"><span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span>
+                <a href="@Url.Action("dashboard","Common",new { pid=20})" class="btn primary-button">Cancel</a>
+
+
+            </li>
+        </ul>
+    </div>
+
+}
+

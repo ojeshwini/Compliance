@@ -1,0 +1,211 @@
+﻿@*@model ComplianceAuditWeb.Models.ListOfGroupCompanies*@
+@model ComplianceAuditWeb.Models.BranchViewModel
+
+@{
+    ViewBag.Title = "List Of Branches";
+}
+@section scripts{
+    <script language="javascript" type="text/javascript">
+
+        function GetCompany(_Groupcompid) {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#CompanyID").html(procemessage).show();
+            var url = "/Common/getcompanydropdown";
+
+            $.ajax({
+                url: url,
+                data: { groupcompid: _Groupcompid },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>Select Company</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#CompanyID").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+
+        }
+
+
+
+
+
+    </script>
+    @*<script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $("#CompanyID").change(function () {
+                window.location.reload(false);
+            });
+        });
+    </script>*@
+
+
+
+}
+
+<ul class="breadcrumb ML15">
+    <li><a href="/Common/dashboard?pid=9">Branch Management</a></li>
+    <li>List Of Branches</li>
+</ul>
+<h2 class="ML15">List Of Branches</h2>
+
+<div class="mid_content_sec">
+
+    @if (TempData["Company"] != null)
+    {
+        <center>
+            <p id="successMessage">@TempData["Company"] @TempData["Success"]</p>
+        </center>
+    }
+    @*@if (TempData["Branch'sCompanyName"] != null)
+        {
+            <center>
+                <p id="successMessage">@TempData["Success"] @TempData["Branch'sCompanyName"]</p>
+            </center>
+        }*@
+    @if (ViewBag.MessageBranch != string.Empty && ViewBag.Success != string.Empty)
+    {
+        <center>
+            <p id="successMessage"> @ViewBag.Success @ViewBag.MessageBranch</p>
+        </center>
+    }
+    else if (ViewBag.Success != string.Empty)
+    {
+        <center>
+            <p id="successMessage">@ViewBag.Success</p>
+        </center>
+    }
+    else
+    {
+        <center>
+            <p id="successMessage" style="color:red">@ViewBag.NotFound</p>
+        </center>
+    }
+
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        if (Model != null)
+        {
+
+            <div class="pull-right fa fa-pull-right" style="font-size:large">
+                <i class="fa fa-plus"></i><font style="font-size:14px; color:dimgray; font-family:Arial">
+
+                    @Html.ActionLink("Add Branch", "AddBranch", new { Orgid = Model.organization.Parent_Company_Id })
+
+                </font>
+            </div>
+            <div class="col-xs-10 subSelect ">
+                <div class="input-field">
+
+                    @*@Html.Label("Group Company")*@
+                    @*@Html.DropDownListFor(model => model.GroupCompanyID, Model.GroupCompaniesList, new { @onchange = "GetCompany(this.value);", @class = "inputMaterial ui - autocomplete - input" })*@
+                    @*@Html.TextBoxFor(model => model.GroupCompanyName, new { @onchange = "GetCompany(this.value);", @class = "inputMaterial ui - autocomplete - input" })*@
+                    @Html.TextBoxFor(model => model.GroupCompanyName, new { @class = "inputMaterial ui - autocomplete - input", @readonly = "readonly" })
+
+                </div>
+            </div>
+
+            <div class="col-xs-10 subSelect ">
+                <div class="input-field">
+                    @if (Model.CompanyID != 0)
+                    {
+                        @Html.Label("Company")
+                        @Html.DropDownListFor(model => model.CompanyID, Model.CompaniesList, new { @onchange = "this.form.submit()", @class = "inputMaterial ui - autocomplete - input" })
+                    }
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.GroupCompanyID);
+            @Html.HiddenFor(m => m.GroupCompanyName);
+            @Html.HiddenFor(model => model.CompaniesList)
+            @Html.HiddenFor(model => model.CompanyID)
+            <div class="clearfix"></div>
+            <div class="new_section_box">
+                <div class="tab-content">
+                    <div id="home" class="tab-pane fade in active">
+                        <h2 class="big_hdng" style="text-transform:none; border:0; margin-top:15px;"></h2>
+                        @if (Model.viewmodel != null)
+                        {
+                            var listcount = 0;
+
+                            foreach (var item in Model.viewmodel)
+                            {
+
+                                listcount++;
+
+                                <div class="col-sm-3 QueList">
+                                    <div class="queContainer">
+                                        @*@item.OrganizationID = @Session["BranchID"];*@
+                                        @if (item.Is_Active == false)
+                                        {
+                                            <a href="@Url.Action("ActivateBranch", "ManageOrganization", new { Orgid = item.BranchID })"
+                                               onclick="return confirm('Are you sure you want to activate?')">
+                                                <i class="fa fa-ban" style="color:black"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("DeactivateBranch", "ManageOrganization", new { Orgid = item.BranchID })"
+                                               onclick="return confirm('Are you sure you want to deactivate?')">
+
+                                                <i class="fa fa-check-circle"></i>
+                                            </a>
+                                        }
+
+                                        <a href="@Url.Action("DeleteBranch", "ManageOrganization", new { Orgid = item.BranchID })"
+                                           onclick="return confirm('Are you sure you want to delete?')">
+
+                                            <i class="fa fa-trash pull-right" style="color:red"></i>
+                                        </a>
+
+                                        <span class="qIcon"><img src="images/company2.JPG" alt=""></span>
+                                        <a href="@Url.Action("UpdateBranch", "ManageOrganization", new { OrgID = item.BranchID })">
+
+                                            <h3 class="PB25"> @Html.DisplayFor(modelItem => item.BranchName)</h3>
+                                        </a>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                                if (4 - listcount == 0)
+                                {
+                                    <div class="clearfix"></div>
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <h4> @ViewBag.Message</h4>
+                        }
+
+
+
+
+                        <div class="clearfix"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    }
+    <ul class="list-inline continueBtn">
+        <li>
+
+
+
+            <a href="@Url.Action("dashboard","Common",new { pid=9})" class="btn primary-button">Cancel</a>
+
+        </li>
+    </ul>
+</div>
+
+
+

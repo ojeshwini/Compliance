@@ -1,0 +1,216 @@
+﻿@model ComplianceAuditWeb.Models.ComplianceIndustryViewModel
+
+@{
+    /**/
+
+    ViewBag.Title = "Map Compliance types";
+}
+
+@section scripts{
+
+
+
+
+    <script language="javascript" type="text/javascript">
+
+
+        function GetComplianceList() {
+            var procemessage = "<option value='0'> Please wait...</option>";
+           // $("#ComplianceID").html(procemessage).show();
+            $("#tbl").html(procemessage).show();
+            var countryid = $("#ComplianceType_CountryID").val();
+            var industrytypeid = $("#ComplianceType_IndustryTypeID").val();
+            var url = "/Common/GetComplianceToBindGrid";
+
+               $.ajax({
+
+                        url: '@Url.Action("GetComplianceToBindGrid", "Common")',
+                        type: "Get",
+                        data: { countryid: countryid, industrytypeid: industrytypeid },
+
+                   //success: function (response) {
+                   //    var trHTML = '';
+                   //    $.each(response, function (i, item) {
+                   //        trHTML += '<tr><td>' + item.CountryName + '</td><td>' + item.IndustryName + '</td><td>' + item.ComplianceType.ComplianceTypeName + '</td></tr>';
+                   //    });
+                   //    $("#gridTbl").append(trHTML);
+
+                   success: (function (response) {
+
+                       $('#gridTbl td').empty();
+                       
+                       $.each(response, function (i, item) {
+                           item.legth;
+                           $('<tr>').append(
+                               $('<td>').text(item.CountryName),
+                               $('<td>').text(item.IndustryName),
+                               $('<td>').text(item.ComplianceType.ComplianceTypeName)
+                           ).appendTo('#gridTbl');
+                           
+                       })
+                   }),
+                        error:function()
+                        {
+                            alert("No Records Found");
+                        }
+
+
+                    });
+        }
+
+    </script>
+
+
+}
+
+
+<ul class="breadcrumb ML15">
+    <li><a href="/Common/dashboard?pid=6">Compliance</a></li>
+    <li>Map Compliances</li>
+</ul>
+<h2 class="ML15">Map Compliances</h2>
+@{string button = "save";
+    string actionname = "IndustryTypeMapwithCompliance";}
+
+@if (Model.ComplianceType.ComplianceTypeID > 0)
+{
+    button = "Update";
+    actionname = "UpdateIndustryTypeMapwithCompliance";
+}
+
+@*@using (Html.BeginForm("IndustryTypeMapwithCompliance", "ManageOrganization", FormMethod.Get))*@
+@using (Html.BeginForm())
+{
+    <div class="mid_content_sec">
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Country", new { @class = "floating-label" })<span style="color:red">*</span>
+                @Html.DropDownListFor(m => m.ComplianceType.CountryID, Model.CountryList, new
+           { @class = "inputMaterial ui - autocomplete - input", @onchange = "GetComplianceList(this.value);" })
+
+
+
+                @*@Html.ValidationMessageFor(model => model.branch.Country_Id, "", new { @class = "text-danger" })*@
+
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Industry Type", new { @class = "floating-label" })<span style="color:red">*</span>
+                @Html.DropDownListFor(m => m.ComplianceType.IndustryTypeID, Model.IndustryTypeList, new
+           { @class = "inputMaterial ui - autocomplete - input", @onchange = "GetComplianceList(this.value);" })
+
+
+
+                @*@Html.ValidationMessageFor(model => model.branch.Country_Id, "", new { @class = "text-danger" })*@
+
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Compliance Type", new { @class = "floating-label" })<span style="color:red">*</span>
+                @Html.TextBoxFor(m => m.ComplianceType.ComplianceTypeName, new { @class = "inputMaterial ui - autocomplete - input" })
+
+
+
+                @*@Html.ValidationMessageFor(model => model.branch.Country_Id, "", new { @class = "text-danger" })*@
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Audit Frequency", new { @class = "floating-label" })<span style="color:red">*</span>
+
+                @Html.DropDownListFor(m => m.ComplianceType.AuditingFrequency, new List<SelectListItem>
+                       {
+                              new SelectListItem{Text="1", Value="1"},
+                         new SelectListItem{Text="2", Value="2"},
+                          new SelectListItem{Text="4", Value="3"},
+                         new SelectListItem{Text="12", Value="4"}}, "-- Select Audit Frequency --", new { @class = "inputMaterial ui - autocomplete - input" })
+
+
+
+            </div>
+        </div>
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Start Date", new { @class = "floating-label" })<span style="color:red">*</span>
+                @Html.EditorFor(m => m.ComplianceType.StartDate, new { @class = "inputMaterial ui - autocomplete - input" })
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("End Date", new { @class = "floating-label" })
+                @Html.EditorFor(m => m.ComplianceType.EndDate, new { @class = "inputMaterial ui - autocomplete - input" })
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <ul class="list-inline continueBtn">
+            <li>
+
+
+                <input type="submit" value="Save" class="btn primary-button"><span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span>
+                <input type="reset" value="Reset" class="btn primary-button"><span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span>
+                <a href="@Url.Action("dashboard", "Common", new { pid = 0 })" class="btn primary-button">Cancel</a>
+
+
+            </li>
+        </ul>
+
+
+        @Html.HiddenFor(m => m.CountryName)
+        @Html.HiddenFor(m => m.IndustryName)
+        @Html.HiddenFor(m => m.ComplianceType.ComplianceTypeName)
+
+
+        @*@Html.ListBoxFor(m => m.ComplianceID, Model.ComplianceTypeList, new { @class = "inputMaterial ui - autocomplete - input" })*@
+        @*@if (ViewBag.EmployeeDetailsGrid != null)*@
+       
+           
+            <div id="div3">
+
+
+
+                <table id="gridTbl" class="table">
+                    <thead class="table">
+                        <tr style="border: 1px solid black;">
+
+                            <th>
+
+                                @Html.DisplayNameFor(e => e.CountryName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(e => e.IndustryName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(e => e.ComplianceType.ComplianceTypeName)
+                            </th>
+
+                        </tr>
+                    </thead>
+                    @*@foreach (var a in ViewBag.EmployeeDetailsGrid)
+        {
+            <tr>
+                <td>@a.CountryName</td>
+                <td>@a.IndustryName</td>
+                <td>@a.ComplianceType.ComplianceTypeName</td>
+            </tr>
+
+        }*@
+
+                </table>
+            </div>
+       
+
+    </div>
+}
+
+
+
+
+

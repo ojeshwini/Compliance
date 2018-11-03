@@ -1,0 +1,139 @@
+﻿@model ComplianceAuditWeb.Models.AuditentryViewModel
+@{
+    ViewBag.Title = "Audit";
+}
+@section scripts{
+    <script src="~/Content/tableHeadFixer.js"></script>
+    <script>
+        $("#auditGrid").tableHeadFixer({
+
+            // fix table header
+            head: true,
+
+            // fix table footer
+            foot: false,
+
+            // fix x left columns
+            left: 2,
+
+            // fix x right columns
+            right: 0,
+
+            // z-index
+            'z-index': 0
+        });
+    </script>
+    <style type="text/css">
+        table {
+            font-family: verdana,arial,sans-serif;
+            font-size: 11px;
+            color: #333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            table th {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #666666;
+                background-color: #dedede;
+            }
+
+            table td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #666666;
+                background-color: #ffffff;
+            }
+
+        .columnsize {
+            width: 150px;
+        }
+    </style>
+    <script>
+
+        function changeact(clicked_id) {
+            var state = document.getElementById("auditGrid");
+            state.style.display = "unset";
+            var city = document.getElementById("Finalsubmit");
+            city.style.display = "none";
+            $.post('/Common/SetSessionVariable',
+                { key: "Actid", value: clicked_id }, function (data) {
+                    //alert("Success " + data.success);
+                });
+            location.reload();
+        }
+        function visiblediv() {
+            var state = document.getElementById("auditGrid");
+            state.style.display = "none";
+            var city = document.getElementById("Finalsubmit");
+            city.style.display = "contents";
+        }
+    </script>
+}
+<h2>Audit</h2>
+
+@using (Html.BeginForm("AuditWebgrid", "ManageAudit", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    var grid = new WebGrid(Model.auditentries, canSort: false, canPage: false);
+    int rowNum = 0;
+    //grid.Pager(WebGridPagerModes.NextPrevious);
+
+    <div id="tabs">
+        <ul class="nav nav-pills">
+            @foreach (var item in Model.ActList)
+            {
+                @*<li><a href="#tab1danger">@item.Text</a></li>*@
+                @*<li><button id=@item.Value onclick="javascript: changeact(this.id); ">@item.Text</button></li>*@
+                @*<li><a href="">@item.Text</a></li>*@
+                <li class="acttab" style="text-decoration-color:white;font-weight:bold">
+                    <a id=@item.Value href="#auditGrid" onclick="changeact(this.id);">@item.Text</a>
+                </li>
+            }
+            <li class="acttab" style="text-decoration-color:white;font-weight:bold"> <a onclick="visiblediv();" href="#Finalsubmit">Final Submission</a></li>
+        </ul>
+
+        <div id="Finalsubmit" style="display:none">
+            @Html.Label("Enter Over All Remarks ")
+            @Html.TextAreaFor(model => model.Overallremarks, new { cols = 180, rows = 2 })
+            <br />
+            <button type="submit" class="btn primary-button" style="margin-left:10px">Submit</button>
+        </div>
+    </div>
+    <div>
+
+        @grid.GetHtml(htmlAttributes: new { id = "auditGrid" },
+        columns:
+        grid.Columns(
+            grid.Column("Sl.no", format: item => rowNum = rowNum + 1),
+            grid.Column("Compliance_Title", header: "Compliance Title", format:@<text>@item.Compliance_Title</text> ),
+                                                                                                                                                       grid.Column("Description", header: "Description", format:@<text>@item.Description</text>, style: "columnsize"),
+                                                                                                                                                                                      grid.Column("Details", header: "Details", format: @<text>@item.Details</text>, style: "columnsize"),
+                                                          grid.Column("Periodicity", header: "Periodicity", format: @<text>@item.Periodicity</text>, style: "col-md-4"),
+                                                                                                                                                                                                                                                                                       grid.Column("Applicability", header: "Applicability", format: (item) => Html.CheckBox("Audit[" + (rowNum - 1).ToString() + "].Applicability", (object)item.Applicability)),
+                                                                                                                                                                                                                                                                                       grid.Column("Non_compliance", header: "Consequcence", format: @<text>@item.Non_compliance</text>, style: "col-md-6"),
+                                                                                                                                                                                                                                                                                                                                                                 grid.Column("Start_Date", header: "Start Date", format: (item) => Html.TextBox("Audit[" + (rowNum - 1).ToString() + "].Start_Date", (object)item.Start_Date, new { type = "date" })),
+                                                                                                                                                                                                                                                                                                                                                                 grid.Column("End_Date", header: "End Date", format: (item) => Html.TextBox("Audit[" + (rowNum - 1).ToString() + "].End_Date", (object)item.End_Date, new { type = "date" })),
+                                                                                                                                                                                                                                                                                                                                                                 //grid.Column("Risk_Category", header: "Risk Category",format:(item)=>Html.DropDownList("Audit["+(rowNum-1).ToString()+ "].Risk_Category",)
+                                                                                                                                                                                                                                                                                                                                                                 grid.Column("Risk_Category", header: "Risk Category", format:@<select><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>, style: "columnsize"),
+                                                                                                                                                grid.Column("Audit_Remarks", header: "Remarks", format: (item) => Html.TextArea("Audit[" + (rowNum - 1).ToString() + "].Audit_Remarks", (object)item.Audit_Remarks)),
+                                                                                                                                                   grid.Column("Evidences", header: "Evidences", format: @<input type="file" name="files" value="" multiple=true />),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  grid.Column("Actual_Date", header: "Actual Date", format: (item) => Html.TextBox("Audit[" + (rowNum - 1).ToString() + "].Actual_Date", (object)item.Actual_Date, new { type = "date" })),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  grid.Column("Due_Date", header: "Due Date", format: (item) => Html.TextBox("Audit[" + (rowNum - 1).ToString() + "].Due_Date", (object)item.Due_Date, new { type = "date" }))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ))
+    </div>
+    @Html.HiddenFor(model => model.auditentries)
+    <div class="clearfix"></div>
+    <ul class="list-inline continueBtn">
+        <li>
+            <button type="submit" class="btn primary-button" style="margin-left:10px">Submit</button>
+            @*@Html.ActionLink("Save", "AuditWebgrid", new { enctype = "multipart/form-data" ,@class="btn primary-button"})
+        <button type="submit" class="btn primary-button" id="btnProceed" name="Button" value="Submit">Save</button>*@
+        </li>
+        </ul>
+
+}

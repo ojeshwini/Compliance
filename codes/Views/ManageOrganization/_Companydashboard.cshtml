@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ComplianceAuditWeb.Models.ListOfGroupCompanies>
+@{
+    ViewBag.Title = "List of Companies:";
+}
+<ul class="breadcrumb ML15">
+    <li><a href="/Common/dashboard?pid=9">Company Management</a></li>
+    <li>List of Companies </li>
+</ul>
+<h2 class="ML15">List of Companies:</h2>
+
+<div class="new_section_box">
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h2 class="big_hdng" style="text-transform:none; border:0; margin-top:15px;"></h2>
+            @if (TempData["Success"] != null)
+            {
+            <center>
+                @*<p class="alert alert-success"  style="width:1000px">  @TempData["Company"]</p>*@
+                <p id="successMessage"> @TempData["Company"] @TempData["Success"] </p>
+            </center>
+            }
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-3 QueList">
+                    <div class="queContainer">
+                        <a href="@Url.Action("AboutCompany", "ManageOrganization",new { id = item.OrganizationID })">
+                            @if (item.IsActive == false)
+                            {
+                                <i class="fa fa-ban"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check-circle"></i>
+                            }
+                            <span class="qIcon"><img src="/UploadedFiles/@item.Logo" alt="" style="height:60px;width:75px"></span>
+                            <h3 class="PB25"> @Html.DisplayFor(modelItem => item.CompanyName)</h3>
+                        </a>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            }
+
+            <div class="clearfix"></div>
+
+        </div>
+
+    </div>
+
+</div>

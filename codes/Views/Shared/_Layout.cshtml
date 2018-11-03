@@ -1,0 +1,153 @@
+﻿@using System.Web.Optimization;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title </title>
+    @Scripts.Render("~/bundles/jquery")
+
+
+    <link href="~/Content/assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/pagestyle.css" rel="stylesheet" />
+
+    <script src="~/Content/assets/js/bootstrap.js"></script>
+    @*<script src="~/Content/assets/js/jquery.min.js"></script>*@
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    @*<script src="~/Content/bootstrap-3.3.7-dist/js/jquery.min.js"></script>
+        <script src="~/Content/bootstrap-3.3.7-dist/js/jquery-ui.min.js"></script>*@
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Content/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    @*<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>*@
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="sidebar sidebar-collapsed">
+        @Html.Action("MenuItems", "ManageAccess");
+    </div>
+
+    <div class="main_body pull-right none">
+        <div class="dashboard">
+            <div class="header">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="col-md-9"><h1><img src="~/Content/assets/images/logo_new.png" /></h1></div>
+                            <div class="col-md-3 pull-right"><h1 class="pull-right"><img src="" alt="" /></h1></div>
+                        </div>
+                        <div class="col-md-2">
+                            <div style="margin:15px">
+                                @if (Convert.ToInt32(Session["Isproductadmin"]) == 0)
+                                {
+                                    if (Session["GroupCompanyName"] != null)
+                                    {
+                                        <label>@Session["GroupCompanyName"]</label>
+                                   
+                                                <button id="GroupCompany" class="btn primary-button">Change</button>
+                                             
+                                                }
+                                                else
+                                                {
+                                              
+                                                        <button id="GroupCompany" class="btn primary-button">Select Group Company</button>
+                                                
+                                                        }
+                                                        <div class="modal fade" id="bootstrapDialog" tabindex="-1" role="dialog" aria-labelledby="myModal-label" aria-hidden="true"
+                                                             data-url='@Url.Action("SelectGroupCompany","Common")'>
+                                                        </div>
+                                                        }
+</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="content-sec ML15">
+            @RenderBody()
+            <hr/>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <footer class="footer">
+        @Html.Partial("~/Views/Shared/_Footer.cshtml")
+    </footer>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+
+
+    //
+    <script>
+        //$(function(){
+        //    $('.queContainer').click(function(){
+        //        $('.queContainer.active').addClass('active');
+        //        $(this).toggleClass('active');
+        //    });
+        //});
+        //</script>
+
+
+    <script>
+
+        $('.toggle').on('click', function () {
+            $('.sidebar').toggleClass("sidebar-collapsed");
+            $('.main_body').toggleClass("new_width");
+        });
+    </script>
+
+    <script>
+        //$(document).ready(function () {
+        //    $('[data-toggle="popover"]').popover();
+        //});
+        $(document).ready(function () {
+            $("[data-toggle='popover']").each(function () {
+                $(this).popover({
+                    title: $(this).data("valMsgFor"),
+                    content: $(this).text()
+                })
+                    .html("<i class='glyphicon glyphicon-question-sign text-danger'></i>");
+            }
+            );
+        });
+    </script>
+    <script>
+        $(function () {
+            $('.homeBtn').click(function () {
+                $(this).toggleClass('active');
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#GroupCompany').click(function () {
+                var url = $('#bootstrapDialog').data('url');
+                $.get(url, function (data) {
+                    $('#bootstrapDialog').html(data);
+
+                    $('#bootstrapDialog').modal('show');
+                });
+            });
+        });
+    </script>
+    @*<style>
+            body {
+                overflow-y: hidden;
+            }
+        </style>*@
+    @Scripts.Render("~/bundles/bootstrap")
+
+    @Scripts.Render("~/Scripts/jquery.validate.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

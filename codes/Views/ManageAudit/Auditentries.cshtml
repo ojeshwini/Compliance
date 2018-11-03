@@ -1,0 +1,157 @@
+﻿@model List<Compliance.DataObject.ComplianceAudit>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Compliance_Audit_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Audit_Remarks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Evidences)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Audit_Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Start_Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.End_Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Audit_Followup_Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Version)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Reviewer_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Reviewer_Comments)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Last_Updated_Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Xref_Comp_Type_Map_ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Org_Hier_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Vendor_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Auditor_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Audit_Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Applicability)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Is_Active)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Risk_Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Company_Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ParentID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Periodicity)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Compliance_Audit_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Audit_Remarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Evidences)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Audit_Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Start_Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.End_Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Audit_Followup_Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Version)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reviewer_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reviewer_Comments)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Last_Updated_Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Xref_Comp_Type_Map_ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Org_Hier_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Vendor_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Auditor_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Audit_Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Applicability)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Is_Active)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Risk_Category)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Company_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ParentID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Periodicity)
+        </td>
+    </tr>
+}
+
+</table>

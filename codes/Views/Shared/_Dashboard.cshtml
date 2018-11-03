@@ -1,0 +1,76 @@
+﻿
+@model IEnumerable < Compliance.DataObject.Menus>
+@{ int listcount = 0;
+    /* string path = String.Empty;*/
+ }
+
+<div class="new_section_box">
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h2 class="big_hdng" style="text-transform:none; border:0; margin-top:15px;"></h2>
+            @foreach (var item in Model)
+            {
+                listcount++;
+                <div class="col-sm-3 QueList">
+                    <div class="queContainer">
+                        @if (item.ParentMenuId == 0)
+                        {
+                            //path = string.Join(" ", item.PathUrl, "?pid=", item.Id);
+                            string image="1"+item.icon;
+                            <a href=@item.PathUrl?pid=@item.Id>
+                                <span class="qIcon"><img src="/Content/assets/images/@image" alt="" />@*<i class="fa fa-users fa-5x"></i>*@</span>
+                                <h3 class="PB25">@item.MenuName</h3>
+                            </a>
+                        }
+                        else
+                        {
+                            //path = @item.PathUrl;
+
+                        <a href=@item.PathUrl>
+                            <span class="qIcon"><img src="/Content/assets/images/@item.icon" alt="" /></span>
+                            <h3 class="PB25">@item.MenuName</h3>
+                        </a>}
+                    </div>
+                </div>
+                if (listcount == 4)
+                {
+                    <div class="clearfix"></div>
+                }
+            }
+            @*<div class="col-sm-3 QueList">
+            <div class="queContainer">
+                <a href="@Url.Action("AddUserGroup","UserManagement")">
+                    <span class="qIcon"><img src="images/company2.JPG" alt=""></span>
+                    <h3 class="PB25">Add UserGroup</h3>
+                </a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <div class="col-sm-3 QueList">
+            <div class="queContainer">
+                <a href="@Url.Action("AddUser","UserManagement")" ">
+                    <span class="qIcon"><img src="images/company2.JPG" alt=""></span>
+                    <h3 class="PB25">Add User</h3>
+                </a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <div class="col-sm-3 QueList">
+            <div class="queContainer">
+                <a href="@Url.Action("ListofUsers","UserManagement")" ">
+                    <span class="qIcon"><img src="images/company2.JPG" alt=""></span>
+                    <h3 class="PB25">ListofUsers</h3>
+                </a>
+                <div class="clearfix"></div>
+            </div>
+        </div>*@
+
+            <div class="clearfix"></div>
+
+        </div>
+
+    </div>
+
+</div>

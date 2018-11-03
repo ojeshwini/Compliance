@@ -1,0 +1,158 @@
+﻿@model ComplianceAuditWeb.Models.UserViewModel
+@using System.Configuration;
+@{
+    /**/
+
+    ViewBag.Title = "Add User Page";
+}
+<ul class="breadcrumb ML15">
+    <li><a href="/Common/dashboard">User Management</a></li>
+    <li>Add User</li>
+</ul>
+<h2 class="ML15">Add User</h2>
+
+@using (Html.BeginForm("AddUser", "UserManagement", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+<div class="mid_content_sec">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.User.UserId)
+
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("FirstName", new { @class = "floating-label" })<span style="color:red">*</span>
+            @Html.TextBoxFor(m => m.User.FirstName, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["FirstName"] })
+            @Html.ValidationMessageFor(m => m.User.FirstName, "", new {@class = "help-block" })
+        </div>
+    </div>
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("MiddleName", new { @class = "floating-label" })<span style="color:red">&nbsp;</span>
+            @Html.TextBoxFor(m => m.User.MiddleName, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["MiddleName"] })
+        </div>
+    </div>
+
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("LastName", new { @class = "floating-label" })<span style="color:red">*</span>
+            @Html.TextBoxFor(m => m.User.LastName, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["LastName"] })
+            @Html.ValidationMessageFor(m => m.User.LastName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("EmailId(UserName)", new { @class = "floating-label" })<span style="color:red">*</span>
+            @if (Model.User.UserId <= 0)
+            {
+                @Html.TextBoxFor(m => m.User.EmailId, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["EmailId"] })
+                <span id="loading_data_icon"></span>
+                @Html.ValidationMessageFor(model => model.User.EmailId, "", new { @class = "text-danger" })
+            }
+            else
+            {
+                @Html.DisplayFor(m => m.User.EmailId, new { @class = "inputMaterial ui - autocomplete - input" })
+                <span id="loading_data_icon"></span>
+            }
+        </div>
+    </div>
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("Password", new { @class = "floating-label" })<span style="color:red">*</span>
+            @Html.PasswordFor(m => m.User.UserPassword, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Password"] })
+            <span id="loading_data_icon"></span>
+            @Html.ValidationMessageFor(m => m.User.UserPassword, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("Confirm Password")<span style="color:red">*</span>
+            @Html.PasswordFor(m => m.ConformPassword, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Confirm_Password"] })
+            @Html.ValidationMessageFor(m => m.ConformPassword, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-xs-4 subSelect ">
+        <div class="input-field">
+            @Html.Label("Contact Number", new { @class = "floating-label" })<span style="color:red">*</span>
+            @Html.TextBoxFor(m => m.User.ContactNumber, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Contact_Number"] })
+            <span id="loading_data_icon"></span>
+            @Html.ValidationMessageFor(m => m.ConformPassword, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="col-xs-1 subSelect ">
+        <div class="input-field">
+            @Html.Label(ConfigurationManager.AppSettings["Gender"], new { @class = "floating-label" })<span style="color:red">*</span>
+        </div>
+    </div>
+    <div class="col-xs-1 subSelect ">
+        <div class="input-field">
+            @Html.Label(ConfigurationManager.AppSettings["Male"], new { @class = "floating-label" })
+            @Html.RadioButtonFor(m => m.User.Gender, "Male", new { @class = "inputMaterial ui - autocomplete - input " })
+        </div>
+    </div>
+    <div class="col-xs-1 subSelect ">
+        <div class="input-field">
+            @Html.Label(ConfigurationManager.AppSettings["Female"], new { @class = "floating-label" })
+            @Html.RadioButtonFor(m => m.User.Gender, "Female", new { @class = "inputMaterial ui - autocomplete - input " })
+        </div>
+    </div>
+    @*<div class="col-xs-1 subSelect ">
+            <div class="input-field">
+                @Html.Label(ConfigurationManager.AppSettings["Others"], new { @class = "floating-label" })
+                @Html.RadioButtonFor(m => m.User.Gender, "Others", new { @class = "inputMaterial ui - autocomplete - input " })
+            </div>
+        </div>*@
+    <div class="col-xs-3 subSelect ">
+        <div class="input-field">
+            @if(Model.User.photo!=null)
+            {
+                <img src="/UploadedFiles/@Model.User.photo" alt="" />
+            }
+            <label for="file">Upload File:</label>
+            <input type="file" name="file" id="file" />
+            @Html.ValidationMessageFor(m=>m.User.photo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-xs-6 subSelect ">
+        <div class="input-field">
+            @Html.Label(ConfigurationManager.AppSettings["UserGroup"], new { @class = "floating-label" })
+            @Html.ListBoxFor(m => m.UserGroupID, Model.UserGroupList, new { @class = "inputMaterialSelect ui - autocomplete - select ", size = "4", placeholder = ConfigurationManager.AppSettings["UserGroup"] })
+            <span id="loading_data_icon"></span>
+        </div>
+    </div>
+    @*<div class="col-xs-6 subSelect ">
+        <div class="input-field">
+            @Html.Label(ConfigurationManager.AppSettings["Roles"], new { @class = "floating-label" })
+            @Html.ListBoxFor(m => m.RoleID, Model.RolesList, new { @class = "inputMaterialSelect ui - autocomplete - input ", size = "4", placeholder = ConfigurationManager.AppSettings["Roles"] })
+            <span id="loading_data_icon"></span>
+        </div>
+    </div>*@
+    <div class="clearfix"></div>
+
+    <ul class="list-inline continueBtn">
+        <li>
+            @{string button = ConfigurationManager.AppSettings["Save"];}
+            @if (Model.User.UserId > 0)
+            {
+
+                @*@Html.CheckBoxFor(m=>m.User.IsActive)*@
+                button = ConfigurationManager.AppSettings["Update"];
+                @Html.ActionLink(ConfigurationManager.AppSettings["Delete"], "DeleteUser", routeValues: new { UserId = Model.User.UserId }, htmlAttributes: new { @class = "btn btn-default" })
+            }
+
+
+            <button type="submit" class="btn primary-button" id="btnProceed" name="Button" value="Submit">@button<span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span></button>           
+        </li>
+        <li>
+            <input type="reset" value="Reset" class="btn primary-button" />
+        </li>
+        <li>
+            <input type="button" value="Cancel" class="btn primary-button" onclick="" />
+        </li>
+    </ul>
+</div>
+}
+
+

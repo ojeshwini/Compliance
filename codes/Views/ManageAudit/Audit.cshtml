@@ -1,0 +1,60 @@
+﻿@model ComplianceAuditWeb.Models.AuditentryViewModel
+@{
+    ViewBag.Title = "Audit";
+}
+@section scripts{
+
+    <script>
+
+        function changeact(clicked_id) {
+            var state = document.getElementById("auditGrid");
+            state.style.display = "unset";
+            var city = document.getElementById("Finalsubmit");
+            city.style.display = "none";
+            $.post('/Common/SetSessionVariable',
+                { key: "Actid", value: clicked_id }, function (data) {
+                    //alert("Success " + data.success);
+                });
+
+        }
+        function visiblediv() {
+
+            var state = document.getElementById("auditGrid");
+            state.style.display = "none";
+            var city = document.getElementById("Finalsubmit");
+            city.style.display = "contents";
+
+        }
+    </script>
+}
+<h2>Audit</h2>
+
+@using (Html.BeginForm("AuditWebgrid", "ManageAudit", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div id="tabs">
+        <ul class="nav nav-pills">
+            @foreach (var item in Model.ActList)
+            {
+                @*<li><a href="#tab1danger">@item.Text</a></li>*@
+                @*<li><button id=@item.Value onclick="javascript: changeact(this.id); ">@item.Text</button></li>*@
+                @*<li><a href="">@item.Text</a></li>*@
+                <li class="acttab" style="text-decoration-color:white;font-weight:bold">
+                    <a id=@item.Value href="#auditGrid" onclick="changeact(this.id);">@item.Text</a>
+                </li>
+            }
+            <li class="acttab" style="text-decoration-color:white;font-weight:bold"> <a onclick="visiblediv();" href="#Finalsubmit">Final Submission</a></li>
+        </ul>
+
+        <div id="Finalsubmit" style="display:none">
+            <form action=@Url.Action("SubmitAudit", "ManageAudit", new { sdate = Model.SDate, edate = Model.EDate })>
+                @Html.Label("Enter Over All Remarks ")
+                @Html.TextAreaFor(model => model.Overallremarks, new { cols = 180, rows = 2 })
+                <br />
+                <button type="submit" class="btn primary-button" style="margin-left:10px">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div>
+
+    </div>
+}

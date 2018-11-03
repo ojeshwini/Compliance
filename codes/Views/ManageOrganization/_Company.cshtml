@@ -1,0 +1,424 @@
+﻿@model ComplianceAuditWeb.Models.CompanyViewModel
+@using System.Configuration;
+@{
+    ViewBag.Title = "Company";
+    //Html.EnableClientValidation(true);
+    //Html.EnableUnobtrusiveJavaScript(true);
+}
+@section scripts
+    {
+    <script language="javascript" type="text/javascript">
+        function GetState(_CountryId) {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#branch_State_Id").html(procemessage).show();
+
+            var url = "/Common/getstate";
+            $.ajax({
+                url: url,
+                data: { countryid: _CountryId },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>-- Select State --</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#branch_State_Id").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+            GetComplianceList();
+        }
+
+        function GetCity(_StateId) {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#branch_City_Id").html(procemessage).show();
+            var url = "/Common/getcity";
+            $.ajax({
+                url: url,
+                data: { stateid: _StateId },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>-- Select City --</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#branch_City_Id").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+        }
+
+        function GetComplianceList() {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#ComplianceID").html(procemessage).show();
+            var countryid = $("#branch_Country_Id").val();
+            var industrytypeid = $("#companydetails_Industry_Type_ID").val();
+            var url = "/Common/getCompliance";
+
+            $.ajax({
+                url: url,
+
+                data: { countryid: countryid, industrytypeid: industrytypeid },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#ComplianceID").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+        }
+
+
+
+    </script>
+    <script type="text/javascript">
+        function ShowPreview(input) {
+            if (input.files && input.files[0]) {
+                var ImageDir = new FileReader();
+                ImageDir.onload = function (e) {
+                    $('#impPrev').attr('src', e.target.result);
+                }
+                ImageDir.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+ 
+
+    @*<option data-toreset="1"></option>
+                <script type="text/javascript">
+                    $('*[data-toreset="1"]').remove();
+        </script>*@
+    <script type="text/javascript">
+        var defaultvalue = $("#branch_State_Id").val();
+        
+      //  alert(defaultvalue);
+        $("#btnreset").on("click", function () {
+            ////$("#branch_State_Id").val($("#branch_State_Id").data(defaultvalue));
+            //$("#branch_State_Id").data(defaultvalue, $("#branch_State_Id").val());
+            $("#branch_State_Id").val(defaultvalue);
+            alert('l');
+
+        });
+      
+        //var d = $('#branch_State_Id').val();
+        //alter(d);
+       
+        //    $("#btnreset").bind("click", function () {
+        //        $("#d")
+        //        [0].selectedIndex = 0;
+        //    });
+      
+      
+    </script>
+
+
+}
+@if (Model.organization.Organization_Id == 0)
+{
+    <ul class="breadcrumb ML15">
+        <li><a href="/Common/dashboard?pid=9">Company Management</a></li>
+        <li>Add Company</li>
+    </ul>
+    <h2 class="ML15">Add  Company</h2>
+
+}
+@{string button = "save";
+    string actionname = "AddCompany";}
+@if (Model.organization.Organization_Id != 0)
+{
+    button = "Update";
+    actionname = "UpdateCompany";
+    <ul class="breadcrumb ML15">
+        <li><a href="/Common/dashboard?pid=9">Company Management</a></li>
+        <li>Update Company</li>
+    </ul>
+    <h2 class="ML15">Update  Company</h2>
+}
+@using (Html.BeginForm(actionname, "ManageOrganization", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    if (TempData["ErrorMessage"] != null)
+    {
+        <p style="color:red">@TempData["ErrorMessage"]</p>
+
+    }
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @*@Html.ValidationMessage("Error")*@
+        <div class="mid_content_sec">
+
+
+            @*@if ((TempData["GroupCompanyID"]) != null)
+        {
+            Model.GroupCompanyName = TempData["GroupCompanyName"].ToString();
+            @Html.Label("Group Company")<span style="color:red">*</span>
+
+
+            @Html.TextBoxFor(m => m.GroupCompanyName, new { @class = "inputMaterial ui - autocomplete - input", @readonly = "readonly" })
+            @Html.HiddenFor(m => m.GroupCompanyID)
+        }
+
+        else
+        {
+            Model.GroupCompanyName = TempData["GroupCompanyName"].ToString();
+            @Html.Label("Group Comapny", new { @class = "floating-label" })<span style="color:red">*</span>
+            @Html.DropDownListFor(m => m.GroupCompanyID, Model.GroupCompaniesList, new { @class = "inputMaterial ui - autocomplete - input" })
+
+        }*@
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Group Company")<span style="color:red">*</span>
+
+                    @Html.TextBoxFor(m => m.GroupCompanyName, new { @class = "inputMaterial ui - autocomplete - input", @readonly = "readonly" })
+                    @*@Html.ValidationMessageFor(model => model.organization.Company_Name, "", new { @class = "text-danger" })*@
+
+
+                    @Html.HiddenFor(m => m.GroupCompanyID)
+
+                </div>
+            </div>
+
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+
+                    @Html.Label("Company Name", new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.TextBoxFor(m => m.organization.Company_Name, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Company_Name"] })
+                    @Html.ValidationMessageFor(model => model.organization.Company_Name, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+
+                    @Html.Label("Company Formal Name", new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.companydetails.Formal_Name, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+
+
+            <div class="col-xs-12 subSelect ">
+                <div class="input-field">
+
+                    @Html.Label("Company Description", new { @class = "floating-label" })
+                    @Html.TextAreaFor(m => m.organization.Description, new { @class = "inputMaterial ui - autocomplete - input", @cols = "800", @style = "width:100% !important; max-width:100% !important;" })
+                    @*<span id="loading_data_icon"></span>*@
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+
+
+            @*@Html.LabelFor(m => m.organization.Last_Updated_Date);*@
+            @Html.HiddenFor(m => m.organization.Last_Updated_Date)
+            @Html.HiddenFor(m => m.organization.Company_Id)
+            @Html.HiddenFor(m => m.organization.Is_Vendor)
+            @Html.HiddenFor(m => m.organization.User_Id)
+            @Html.HiddenFor(m => m.organization.Parent_Company_Id)
+            @Html.HiddenFor(m => m.organization.Level)
+            @Html.HiddenFor(m => m.branch.Org_Hier_ID)
+
+
+
+
+
+            @Html.HiddenFor(m => m.companydetails.Company_Details_ID)
+            @Html.HiddenFor(m => m.organization.Is_Active)
+
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+
+
+                    @Html.LabelFor(m => m.companydetails.Website, new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.TextBoxFor(m => m.companydetails.Website, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Website"] })
+                    @Html.ValidationMessageFor(model => model.companydetails.Website, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.organization.Organization_Id)
+
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+
+                    @Html.Label("Company Email Address", new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.TextBoxFor(m => m.companydetails.Company_EmailID, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Company_Email_ID"] })
+                    @Html.ValidationMessageFor(model => model.companydetails.Company_EmailID, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Contact Number1", new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.TextBoxFor(m => m.companydetails.Company_ContactNumber1, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Contact_Number"] })
+                    @Html.ValidationMessageFor(model => model.companydetails.Company_ContactNumber1, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="col-xs-4 subSelect ">
+
+                <div class="input-field">
+                    @Html.Label("Contact Number2", new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.companydetails.Company_ContactNumber2, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+
+            </div>
+
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Location Name", new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.branch.Branch_Name, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+            </div>
+
+
+
+
+
+
+
+            @Html.HiddenFor(m => m.branch.Branch_Id)
+            @Html.HiddenFor(m => m.companydetails.Company_Details_ID)
+
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.LabelFor(m => m.branch.Address, new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.branch.Address, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @*@Html.Label(ConfigurationManager.AppSettings["vendors"], new { @class = "floating-label" })*@
+                    @Html.Label("Company Start Date")<span style="color:red">*</span>
+                    @Html.EditorFor(m => m.companydetails.Calender_StartDate, new { @class = "inputMaterialSelect ui - autocomplete - input " })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Company End Date")
+                    @*@Html.EditorFor(m => m.companydetails.CalenderCompEndDate, "{0:s}", new { @class = "inputMaterialSelect ui - autocomplete - input " })*@
+                    @*@Html.EditorFor(m => m.companydetails.CalenderCompEndDate, new { htmlAttributes = new { @class = "datepicker" }, @class = "inputMaterialSelect ui - autocomplete - input ", })*@
+                    @Html.EditorFor(m => m.companydetails.CalenderCompEndDate, "{0:dd-MM-yyy}", new  { @class = "inputMaterialSelect ui - autocomplete - input " })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Industry Type", new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.DropDownListFor(m => m.companydetails.Industry_Type_ID, Model.IndustryTypeList, new { @onchange = "GetComplianceList(this.value);", @class = "inputMaterial ui - autocomplete - input" })
+                    @Html.ValidationMessageFor(model => model.companydetails.Industry_Type_ID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Branch Coordinates1", new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.branch.Branch_Coordinates1, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Branch Coordinates2", new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.branch.Branch_Coordinates2, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Country", new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.DropDownListFor(m => m.branch.Country_Id, Model.Country, new { @onchange = "GetState(this.value);", @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Country_ID"] })
+                    @Html.ValidationMessageFor(model => model.branch.Country_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.LabelFor(m => m.State, new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.DropDownListFor(m => m.branch.State_Id, Model.State, new { @onchange = "GetCity(this.value);", @class = "inputMaterial ui - autocomplete - input" })
+                    @Html.ValidationMessageFor(model => model.branch.State_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.LabelFor(m => m.City, new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.DropDownListFor(m => m.branch.City_Id, Model.City, new { @class = "inputMaterial ui - autocomplete - input" })
+                    @Html.ValidationMessageFor(model => model.branch.City_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+
+                    @Html.Label("List Of Compliances", new { @class = "floating-label" })
+                    @Html.ListBoxFor(m => m.ComplianceID, Model.ComplianceList, new { @class = "inputMaterial ui - autocomplete - input", size = "4" })
+                    <span id="loading_data_icon"></span>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Location URL", new { @class = "floating-label" })
+                    @Html.TextBoxFor(m => m.branch.Branch_CoordinatesURL, new { @class = "inputMaterial ui - autocomplete - input" })
+                </div>
+            </div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    @Html.Label("Postal Code", new { @class = "floating-label" })<span style="color:red">*</span>
+                    @Html.TextBoxFor(m => m.branch.Postal_Code, new { @class = "inputMaterial ui - autocomplete - input", placeholder = ConfigurationManager.AppSettings["Postal_Code"] })
+                    @Html.ValidationMessageFor(model => model.branch.Postal_Code, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-xs-4 subSelect ">
+                <div class="input-field">
+                    <label for="file">Upload Logo:</label>
+                    <input type="file" name="file" id="file" onchange="ShowPreview(this)" />
+                    @Html.ValidationMessageFor(m => m.organization.logo, "", new { @class = "text-danger" })
+                    <img id="impPrev" src="/UploadedFiles/@Model.organization.logo" alt="" style="height:80px;width:80px" />
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <ul class="list-inline continueBtn">
+                <li>
+                    <input type="submit" value="@button" id="btn" class="btn primary-button"><span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span>
+                    <input type="reset" value="Reset" id="btnreset" class="btn primary-button"><span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span>
+                    <a href="@Url.Action("dashboard","Common",new { pid=9})" class="btn primary-button">Cancel</a>
+                </li>
+            </ul>
+        </div>
+}
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+
+
+
+
+

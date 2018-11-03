@@ -1,0 +1,204 @@
+﻿@model ComplianceAuditWeb.Models.ReportViewModel
+
+@{
+    ViewBag.Title = "Reporting Page";
+}
+<ul class="breadcrumb ML15">
+    <li><a href="/Common/dashboard?pid=18">Report Management</a></li>
+    <li>Reporting Dashboard</li>
+</ul>
+<h2 class="ML15">Reporting Dashboard</h2>
+
+<style>
+    .tspan {
+        font-size: 10px;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    <div class="mid_content_sec">
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+
+
+        <div class="clearfix"></div>
+        @*<div class="col-xs-12 subSelect ">*@
+        @if (Model != null)
+        {
+
+            <h4 class="big_hdng" style="text-transform:none; border:0; margin-top:15px;">@ViewBag.CompanyName</h4>
+            <h4>
+                @Html.Label("Name : ")
+                @Html.DisplayFor(model => model.Vendorname)
+            </h4>
+            <h4 class="big_hdng" style="text-transform:none; border:0; margin-top:15px;">@ViewBag.ComplianceName</h4>
+
+
+            foreach (var item in Model.compliance_Types)
+            {
+                @*<h4 class="big_hdng" style="text-transform:none; border:0; margin-top:15px;">@item.Name</h4>*@
+                DateTime sdate = item.startdate;
+                DateTime edate = item.enddate;
+
+
+
+
+            }
+        }
+
+    </div>
+    <div class="clearfix"></div>
+}
+<script src="~/Scripts/chart/exporting.js"></script>
+<script src="~/Scripts/chart/highcharts.js"></script>
+<script src="~/Scripts/chart/highcharts-3d.js"></script>
+
+
+
+
+
+<div>
+    <div id="charts" style="font-size:small"></div>
+    <script>
+        (function () {
+            $(document).ready(function () {
+                $.getJSON("/Reporting/GetCompanyData", function (data) {
+                    Highcharts.setOptions({
+                        colors: ['green', 'red', 'orange',]
+                    });
+                    $charts = $('#charts');
+                    $.each(data, function (key, item) {
+                        $charts.append('<div id="container' + key + '"></div>');
+                        var $chart = $('#container' + key);
+                        var data = [];
+                        $.each(item, function (prop, value) {
+                            data.push({
+                                name: prop,
+                                y: value
+                            });
+                        });
+                        $chart.highcharts({
+                            chart: {
+                                type: 'pie',
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                options3d: {
+                                    enabled: true,
+                                    alpha: 50,
+                                    beta: 0
+                                },
+                                id: 'mychart'
+                            },
+                            title: {
+                                text: 'Compliance Status' + ',' + item.yearid + ' ' + '<br>' +
+                                    'Audit Period' + ' ' + 'is' + '   ' + item.StartDate + ' ' + 'To' + ' ' + item.EndDate,
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                        style: {
+                                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                    }
+                                }
+                            },
+                            plotOptions: {
+                                series: {
+                                    allowPointSelect: true,
+                                    size: 350,
+                                    depth: 45,
+                                    cursor: 'pointer',
+                                    formatter: function () {
+                                        return Math.round(this.percentage * 100) / 100 + ' %';
+                                    },
+                                    distance: -30,
+                                    color: 'black',
+                                    point: {
+                                        events: {
+                                            click: function (e) {
+                                                location.href = this.options.url;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Rate of Compliance',
+                                colorByPoint: true,
+                                data: [{
+                                    name: 'Compliant',
+                                    y: item.Complianced,
+                                    x: item.ID,
+                                    z: item.compliancetypeid,
+                                    url: '/Reporting/getCompanyReports/?companyid?n?sdate?edate?compliancetypeid?frequencyid?companyname?halfyearid?monthid?yearid?typeid' +
+                                        '&companyid=' + item.CompanyID + '&n=' + 'Compliant' +
+                                        '&sdate=' + item.StartDate + '&edate=' + item.EndDate + '&compliancetypeid=' + item.compliancetypeid +
+                                        '&frequencyid=' + item.frequencyid + '&companyname=' + item.CompanyName + '&halfyearid=' + item.halfyearid + '&monthid=' + item.monthid +
+                                        '&yearid=' + item.yearid + '&typeid=' + item.typeid
+                                }, {
+                                        name: 'Non-Compliant',
+                                        y: item.Non_Complianced,
+                                        url: '/Reporting/getCompanyReports/?companyid?n?sdate?edate?compliancetypeid?frequencyid?companyname?halfyearid?monthid?yearid?typeid'
+                                            + '&companyid=' + item.CompanyID + '&n=' + 'Non Compliant' +
+                                            '&sdate=' + item.StartDate + '&edate=' + item.EndDate + '&compliancetypeid=' + item.compliancetypeid +
+                                            '&frequencyid=' + item.frequencyid + '&companyname=' + item.CompanyName + '&halfyearid=' + item.halfyearid + '&monthid=' + item.monthid +
+                                            '&yearid=' + item.yearid + '&typeid=' + item.typeid
+                                    },
+                                //}, {
+                                //    name: 'Partially-Compliant',
+                                //    y: item.Partially_Complianced,
+                                //        url: '/Reporting/getCompanyReports/?companyid?n?sdate?edate?compliancetypeid?frequencyid?companyname' 
+                                //            + '&companyid=' + item.CompanyID + '&n=' + 'Partially Compliant' +
+                                //            '&sdate=' + item.StartDate + '&edate=' + item.EndDate + '&compliancetypeid=' + item.compliancetypeid +
+                                //            '&frequencyid=' + item.frequencyid + '&companyname=' + item.CompanyName
+                                //    },
+                                ]
+                            }]
+                        });
+                    });
+                });
+            });
+        })();
+    </script>
+    <div class="pull-right">
+        @foreach (var dates in Model.startEndDates)
+        {
+            DateTime sdate = dates.StartDate;
+            DateTime edate = dates.EndDate;
+            <a href="@Url.Action("GetBranchReports", "Reporting",
+                                                    new {    x = Model.branchid,
+                        y = Model.Vendorid,
+                        compliancetypeid = Model.complianceTypeid,
+                        sdate = sdate.ToShortDateString(),
+                        edate = edate.ToShortDateString() })">
+                <span class="qIcon"></span>
+
+                <h3 class="PB25">Detailed report from  @sdate.ToString("dd - MMM - yyyy") to @edate.ToString("dd - MMM - yyyy")</h3>
+            </a>
+
+         
+        }
+    </div>
+    <div class="clearfix"></div>
+    <ul class="list-inline continueBtn">
+        <li>
+            <a href="@Url.Action("selectbranch","Reporting",new { pid=0})" class="btn primary-button">Cancel</a>
+
+        </li>
+    </ul>
+</div>
+
+

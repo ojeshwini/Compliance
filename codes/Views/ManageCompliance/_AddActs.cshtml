@@ -1,0 +1,163 @@
+﻿@model ComplianceAuditWeb.Models.ComplianceViewModel
+
+@{
+    ViewBag.Title = "Add Acts Page";
+    Layout = null;
+}
+    <script language="javascript" type="text/javascript">
+        function GetState(_CountryId) {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#Compliance_State_ID").html(procemessage).show();
+            var url = "/Common/getstate";
+            $.ajax({
+                url: url,
+                data: { countryid: _CountryId },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>Select State</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#Compliance_State_ID").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+        }
+        function GetCity(_StateId) {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#Compliance_City_ID").html(procemessage).show();
+            var url = "/Common/getcity";
+            $.ajax({
+                url: url,
+                data: { stateid: _StateId },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>Select State</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#Compliance_City_ID").html(markup).show();
+                },
+                error: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+        }
+
+        function Visible(_actype) {
+            var state = document.getElementById("state");
+            state.style.visibility = _actype > 1 ? "visible" : "hidden";
+            var city = document.getElementById("city");
+            city.style.visibility = _actype > 2 ? "visible" : "hidden";
+        }
+    </script>
+
+<div class="">
+    <div class="modal-title" style="margin: 10px;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h2 class="ML15">Add Act</h2>
+    </div>
+        @using (Html.BeginForm())
+        {
+    <div class="mid_content_sec">
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @if (TempData["Message"] != null)
+        {
+            @*<p class="alert alert-warning">@TempData["Message"]</p>*@
+            <p style="color:red">@TempData["Message"]</p>
+        }
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Country", new { @class = "floating-label" })<span style="color:red">*</span>
+                @Html.DropDownListFor(model => model.Compliance.Country_ID, Model.Countrylist, new { @onchange = "javascript:GetState(this.value); ", @class = "inputMaterial ui - autocomplete - input" })
+                @Html.ValidationMessageFor(model => model.Compliance.Country_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Level", new { @class = "floating-label" })<span style="color:red">*</span>
+                @*@Html.DropDownListFor(model => model.ActTypeID, new SelectList(Enum.GetNames(typeof(ComplianceAuditWeb.Models.ComplianceViewModel.ActType)), new { @onchange = "javascript:Visible(this.value); ", @class = "inputMaterial ui - autocomplete - input" }))*@
+                @Html.DropDownListFor(model => model.ActTypeID, Model.ActType, new { @onchange = "javascript:Visible(this.value); ", @class = "inputMaterial ui - autocomplete - input" })
+                @Html.ValidationMessageFor(model => model.ActTypeID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Act Title", new { @class = "floating-label" })<span style="color:red">*</span>
+
+                @Html.TextBoxFor(model => model.Compliance.Compliance_Title, new { @class = "inputMaterial ui - autocomplete - input" })
+                <span id="loading_data_icon"></span>
+                @Html.ValidationMessageFor(model => model.Compliance.Compliance_Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-xs-12 subSelect ">
+            <div class="input-field">
+                @Html.Label("Act Description", new { @class = "floating-label" })
+
+                @Html.TextAreaFor(model => model.Compliance.Comp_Description, new { @class = "inputMaterial ui - autocomplete - input" })
+                <span id="loading_data_icon"></span>
+                @Html.ValidationMessageFor(model => model.Compliance.Comp_Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="col-xs-4 subSelect ">
+            <div class="input-field">
+                @Html.Label("Effective Start Date", new { @class = "floating-label" })<span style="color:red">*</span>
+                @Html.TextBox("Compliance_Effective_Start_Date", String.Format("{0:d}", Model.Compliance.Effective_Start_Date.ToShortDateString()), new { @class = "datefield", type = "date" })
+                @*@Html.EditorFor(model => model.Compliance.Effective_Start_Date)*@
+                <span id="loading_data_icon"></span>
+                @Html.ValidationMessageFor(model => model.Compliance.Effective_Start_Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect" id="state" style="visibility:hidden">
+            <div class="input-field">
+                @Html.Label("State", new { @class = "floating-label" })
+                @Html.DropDownListFor(model => model.Compliance.State_ID, Model.Statelist, new { @onchange = "GetCity(this.value)", @class = "inputMaterial ui - autocomplete - input" })
+                @Html.ValidationMessageFor(model => model.Compliance.State_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-xs-4 subSelect " id="city" style="visibility:hidden">
+            <div class="input-field">
+                @Html.Label("City", new { @class = "floating-label" })
+                @Html.DropDownListFor(model => model.Compliance.City_ID, Model.Citylist, new { @class = "inputMaterial ui - autocomplete - input" })
+                @Html.ValidationMessageFor(model => model.Compliance.City_ID, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="modal-footer" style="padding:0px">
+            <ul class="list-inline continueBtn">
+                <li>
+                    <button type="submit" class="btn primary-button" id="btnProceed" name="Button" value="Submit">Save<span class="ripple" style="width: 92.6094px; height: 92.6094px; top: 49.5px; left: -19.1875px;"></span></button>
+                    <button type="reset" class="btn primary-button">Reset</button>
+                    <button class="btn primary-button" data-dismiss="modal" id="btnCancel">Cancel</button>
+                    @*<button type="button" data-url="@Url.Action("dashboard","common",new { pid=14})" class="btn primary-button">Cancel</button>*@
+                    @*<a href="@Url.Action("dashboard","common",new { pid=14})" class="btn primary-button">Cancel</a>*@
+                </li>
+            </ul>
+        </div>
+        </div>
+        }
+
+    </div>
+<script type="text/javascript">
+    $(function () {
+        $('#approve-btn').click(function () {
+            $('#modal-container').modal('hide');
+        });
+    });
+</script>
